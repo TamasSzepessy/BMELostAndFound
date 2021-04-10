@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="buildings">
+        <item>K</item>
+        <item>Q</item>
+        <item>I</item>
+        <item>CH</item>
+        <item>Kö</item>
+        <item>F</item>
+        <item>L</item>
+        <item>Hő</item>
+        <item>MT</item>
+        <item>MM</item>
+        <item>AE</item>
+        <item>D</item>
+        <item>St</item>
+        <item>J</item>
+        <item>R</item>
+        <item>T</item>
+        <item>H</item>
+        <item>E</item>
+        <item>G</item>
+        <item>V1</item>
+        <item>V2</item>
+        <item>Schönherz</item>
+        <item>Kármán</item>
+        <item>Vásárhelyi</item>
+        <item>Sportcsarnok</item>
+    </string-array>
+</resources>

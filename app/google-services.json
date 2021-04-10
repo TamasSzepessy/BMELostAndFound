@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "458239838933",
+    "project_id": "bmelostandfound",
+    "storage_bucket": "bmelostandfound.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458239838933:android:0490466e174c318f44705c",
+        "android_client_info": {
+          "package_name": "hu.bme.aut.android.bmelostandfound"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "458239838933-ckka4q5hu7h2d7je3n53m1jtqqijv24l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYul5X55rlYnSmYfBi-Gt-N64iZi7r88Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "458239838933-ckka4q5hu7h2d7je3n53m1jtqqijv24l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -53,6 +53,8 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:maxLines="2"
             tools:text="Body"
             card_view:layout_constraintEnd_toEndOf="@+id/tvBuildingCode"
             card_view:layout_constraintHorizontal_bias="0.0"

@@ -16,6 +16,7 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
+import hu.bme.aut.android.bmelostandfound.adapter.ContactsAdapter
 import hu.bme.aut.android.bmelostandfound.adapter.PostsAdapter
 import hu.bme.aut.android.bmelostandfound.data.Post
 import hu.bme.aut.android.bmelostandfound.databinding.ActivityMyPostsBinding
@@ -50,6 +51,12 @@ class MyPostsActivity : AppCompatActivity(), PostsAdapter.PostClickListener {
     private fun setupRecyclerView() {
         postsAdapter = PostsAdapter(applicationContext)
         postsAdapter.itemClickListener = this
+        postsAdapter.setOnAdapterCountListener(object : PostsAdapter.OnAdapterCountListener {
+            override fun onAdapterCountListener(count: Int) {
+                if (count > 0) binding.tvEmpty.visibility = View.GONE
+                else binding.tvEmpty.visibility = View.VISIBLE
+            }
+        })
         binding.contentPosts.rvPosts.layoutManager =
             LinearLayoutManager(applicationContext).apply {
                 reverseLayout = true
@@ -72,9 +79,28 @@ class MyPostsActivity : AppCompatActivity(), PostsAdapter.PostClickListener {
 
     override fun onItemLongClick(position: Int, view: View, post: Post): Boolean {
         val popup = PopupMenu(this, view)
+        if (!post.applied.isNullOrBlank()) {
+            popup.menu.add(1,1,1,getString(R.string.reset_applied))
+        }
         popup.inflate(R.menu.row_menu)
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
+                1 -> {
+                    val alertDialog = AlertDialog.Builder(this).create()
+                    alertDialog.setTitle(getString(R.string.reset_applied))
+                    alertDialog.setMessage(getString(R.string.reset_applied_msg))
+                    alertDialog.setButton(
+                        AlertDialog.BUTTON_POSITIVE,
+                        getString(R.string.yes)
+                    ) { dialog, which ->
+                        deleteApplied(post.from!!, post.refid!!)
+                    }
+                    alertDialog.setButton(
+                        AlertDialog.BUTTON_NEGATIVE,
+                        getString(R.string.no)
+                    ) { dialog, which -> dialog.dismiss() }
+                    alertDialog.show()
+                }
                 R.id.delete -> {
                     val alertDialog = AlertDialog.Builder(this).create()
                     alertDialog.setTitle(getString(R.string.delete_post_title))
@@ -100,6 +126,18 @@ class MyPostsActivity : AppCompatActivity(), PostsAdapter.PostClickListener {
         }
         popup.show()
         return false
+    }
+
+    private fun deleteApplied(coll: String, ref: String) {
+        val db = Firebase.firestore
+        db.collection(coll).document(ref)
+            .update("applied", null)
+            .addOnSuccessListener {
+                Toast.makeText(this, getString(R.string.reset_applied_success), Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun deleteFromFirestore(post: Post) {

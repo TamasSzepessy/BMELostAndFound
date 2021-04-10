@@ -17,19 +17,14 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.res.ResourcesCompat
-import androidx.core.view.marginBottom
 import androidx.fragment.app.DialogFragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewModelScope
 import com.bumptech.glide.Glide
 import hu.bme.aut.android.bmelostandfound.R
 import hu.bme.aut.android.bmelostandfound.data.User
-import hu.bme.aut.android.bmelostandfound.database.ContactDao
 import hu.bme.aut.android.bmelostandfound.databinding.FragmentContactBinding
 import hu.bme.aut.android.bmelostandfound.extensions.observeOnce
-import hu.bme.aut.android.bmelostandfound.viewmodel.ContactViewModel
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import hu.bme.aut.android.bmelostandfound.room.db.viewmodel.ContactViewModel
 import permissions.dispatcher.*
 import java.io.File
 import java.io.FileOutputStream
@@ -164,7 +159,7 @@ class ContactFragment(user: User, self: Boolean = false) : DialogFragment() {
         return path.absolutePath
     }
 
-    fun contactSaved() {
+    private fun contactSaved() {
         val drawable =
             ResourcesCompat.getDrawable(resources, R.drawable.ic_baseline_offline_pin_32, null)
         drawable?.let {
@@ -175,11 +170,11 @@ class ContactFragment(user: User, self: Boolean = false) : DialogFragment() {
         binding.btnDownload.setBackgroundColor(resources.getColor(R.color.primaryLightColor))
     }
 
-    fun sendEmail() {
+    private fun sendEmail() {
         val mailIntent = Intent(Intent.ACTION_SENDTO)
         mailIntent.data = Uri.parse("mailto:${binding.tvUserMail.text}")
         mailIntent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.app_name))
-        startActivity(Intent.createChooser(mailIntent, getString(R.string.send_sms_intent)))
+        startActivity(Intent.createChooser(mailIntent, getString(R.string.send_mail_intent)))
     }
 
     @NeedsPermission(Manifest.permission.CALL_PHONE)
@@ -207,7 +202,7 @@ class ContactFragment(user: User, self: Boolean = false) : DialogFragment() {
         alertDialog.show()
     }
 
-    fun sendText(phoneNumber: String) {
+    private fun sendText(phoneNumber: String) {
         val smsIntent = Intent(Intent.ACTION_SENDTO)
         smsIntent.type = "text/plain"
         smsIntent.data = Uri.parse("smsto:$phoneNumber")

@@ -10,5 +10,6 @@ class Post(
         var imageUrl: String? = null,
         var building: String? = null,
         var date: String? = null,
+        var applied: String? = null,
         var from: String? = null
 ) : Serializable

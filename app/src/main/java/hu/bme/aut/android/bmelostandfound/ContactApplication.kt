@@ -2,7 +2,7 @@ package hu.bme.aut.android.bmelostandfound
 
 import android.app.Application
 import androidx.room.Room
-import hu.bme.aut.android.bmelostandfound.database.ContactDatabase
+import hu.bme.aut.android.bmelostandfound.room.db.database.ContactDatabase
 
 class ContactApplication : Application() {
 

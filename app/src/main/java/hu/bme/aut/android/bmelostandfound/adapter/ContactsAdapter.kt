@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import hu.bme.aut.android.bmelostandfound.R
-import hu.bme.aut.android.bmelostandfound.data.Post
 import hu.bme.aut.android.bmelostandfound.data.User
 import hu.bme.aut.android.bmelostandfound.databinding.CardContactBinding
 
@@ -20,6 +18,10 @@ class ContactsAdapter(private val context: Context) :
     ListAdapter<User, ContactsAdapter.ContactViewHolder>(itemCallback) {
 
     var itemClickListener: ContactClickListener? = null
+    private var onAdapterCountListener: OnAdapterCountListener? = null
+    fun setOnAdapterCountListener(l: OnAdapterCountListener) {
+        onAdapterCountListener = l
+    }
 
     inner class ContactViewHolder(binding: CardContactBinding) : RecyclerView.ViewHolder(binding.root) {
         val tvUser: TextView = binding.tvUser
@@ -30,6 +32,7 @@ class ContactsAdapter(private val context: Context) :
         var user: User? = null
 
         init {
+            onAdapterCountListener?.onAdapterCountListener(itemCount)
             itemView.setOnClickListener {
                 user?.let { user ->
                     itemClickListener?.onItemClick(user)
@@ -50,7 +53,13 @@ class ContactsAdapter(private val context: Context) :
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
-        ContactViewHolder(CardContactBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+        ContactViewHolder(
+            CardContactBinding.inflate(
+                LayoutInflater.from(parent.context),
+                parent,
+                false
+            )
+        )
 
     override fun onBindViewHolder(holder: ContactViewHolder, position: Int) {
         val tmpUser = this.getItem(position)
@@ -87,5 +96,9 @@ class ContactsAdapter(private val context: Context) :
     interface ContactClickListener {
         fun onItemClick(user: User)
         fun onItemLongClick(position: Int, view: View, user: User): Boolean
+    }
+
+    interface OnAdapterCountListener {
+        fun onAdapterCountListener(count: Int)
     }
 }

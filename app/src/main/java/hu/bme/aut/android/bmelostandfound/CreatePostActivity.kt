@@ -95,7 +95,8 @@ class CreatePostActivity() : BaseActivity() {
             binding.etBody.text.toString(),
             imageUrl,
             binding.spinnerBuildings.selectedItem.toString(),
-            currentDate
+            currentDate,
+            null
         )
 
         val db = Firebase.firestore

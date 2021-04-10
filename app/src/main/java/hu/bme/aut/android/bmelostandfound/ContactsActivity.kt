@@ -2,18 +2,20 @@ package hu.bme.aut.android.bmelostandfound
 
 import android.content.Context
 import android.content.ContextWrapper
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.widget.PopupMenu
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import hu.bme.aut.android.bmelostandfound.adapter.ContactsAdapter
 import hu.bme.aut.android.bmelostandfound.data.User
 import hu.bme.aut.android.bmelostandfound.databinding.ActivityContactsBinding
 import hu.bme.aut.android.bmelostandfound.fragments.ContactFragment
-import hu.bme.aut.android.bmelostandfound.viewmodel.ContactViewModel
+import hu.bme.aut.android.bmelostandfound.room.db.viewmodel.ContactViewModel
 import java.io.File
 import java.util.*
 
@@ -52,12 +54,19 @@ class ContactsActivity : AppCompatActivity(), ContactsAdapter.ContactClickListen
     private fun setupRecyclerView() {
         contactsAdapter = ContactsAdapter(applicationContext)
         contactsAdapter.itemClickListener = this
+        contactsAdapter.setOnAdapterCountListener(object : ContactsAdapter.OnAdapterCountListener {
+            override fun onAdapterCountListener(count: Int) {
+                if (count > 0) binding.tvEmpty.visibility = View.GONE
+                else binding.tvEmpty.visibility = View.VISIBLE
+            }
+        })
         binding.contentPosts.rvPosts.layoutManager =
             LinearLayoutManager(applicationContext).apply {
                 reverseLayout = true
                 stackFromEnd = true
             }
         binding.contentPosts.rvPosts.adapter = contactsAdapter
+
     }
 
     override fun onItemClick(user: User) {
@@ -71,11 +80,23 @@ class ContactsActivity : AppCompatActivity(), ContactsAdapter.ContactClickListen
         popup.setOnMenuItemClickListener { item ->
             when (item.itemId) {
                 R.id.delete -> {
-                    if (!user.imageUrl.isNullOrBlank()) {
-                        val result = deleteUserImage(user.imageUrl!!)
+                    val alertDialog = AlertDialog.Builder(this).create()
+                    alertDialog.setTitle(getString(R.string.delete_contact_title))
+                    alertDialog.setMessage(getString(R.string.delete_contact_msg))
+                    alertDialog.setButton(
+                        AlertDialog.BUTTON_POSITIVE,
+                        getString(R.string.yes)
+                    ) { dialog, which ->
+                        if (!user.imageUrl.isNullOrBlank()) {
+                            val result = deleteUserImage(user.imageUrl!!)
+                        }
+                        contactViewModel.delete(user)
                     }
-                    contactViewModel.delete(user)
-                    //Toast.makeText(this, "Névjegy törölve", Toast.LENGTH_LONG).show()
+                    alertDialog.setButton(
+                        AlertDialog.BUTTON_NEGATIVE,
+                        getString(R.string.no)
+                    ) { dialog, which -> dialog.dismiss() }
+                    alertDialog.show()
                     return@setOnMenuItemClickListener true
                 }
             }

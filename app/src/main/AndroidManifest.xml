@@ -27,7 +27,7 @@
             android:name=".RegisterActivity"
             android:screenOrientation="portrait"/>
         <activity
-            android:name=".PostTabsActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:theme="@style/Theme.BMELostAndFound.NoActionBar" />
         <activity

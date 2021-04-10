@@ -16,6 +16,7 @@ import hu.bme.aut.android.bmelostandfound.R
 import hu.bme.aut.android.bmelostandfound.data.Post
 import hu.bme.aut.android.bmelostandfound.databinding.CardPostBinding
 
+
 class PostsAdapter(private val context: Context) :
     ListAdapter<Post, PostsAdapter.PostViewHolder>(itemCallback) {
 
@@ -23,6 +24,10 @@ class PostsAdapter(private val context: Context) :
     private var lastPosition = -1
 
     var itemClickListener: PostClickListener? = null
+    private var onAdapterCountListener: OnAdapterCountListener? = null
+    fun setOnAdapterCountListener(l: OnAdapterCountListener) {
+        onAdapterCountListener = l
+    }
 
     inner class PostViewHolder(binding: CardPostBinding) : RecyclerView.ViewHolder(binding.root) {
         val tvBuildingCode: TextView = binding.tvBuildingCode
@@ -34,6 +39,7 @@ class PostsAdapter(private val context: Context) :
         var post: Post? = null
 
         init {
+            onAdapterCountListener?.onAdapterCountListener (itemCount)
             itemView.setOnClickListener {
                 post?.let { post ->
                     itemClickListener?.onItemClick(post)
@@ -51,6 +57,10 @@ class PostsAdapter(private val context: Context) :
                 true
             }
         }
+    }
+
+    override fun getItemCount(): Int {
+        return postList.size
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int) =
@@ -102,6 +112,8 @@ class PostsAdapter(private val context: Context) :
         postList.remove(postList.find { it.refid == refid })
         post.refid = refid
         postList += (post)
+        postList.sortByDescending { it.date }
+        postList.reverse()
         submitList((postList))
         notifyDataSetChanged()
     }
@@ -131,5 +143,9 @@ class PostsAdapter(private val context: Context) :
     interface PostClickListener {
         fun onItemClick(post: Post)
         fun onItemLongClick(position: Int, view: View, post: Post): Boolean
+    }
+
+    interface OnAdapterCountListener {
+        fun onAdapterCountListener(count: Int)
     }
 }

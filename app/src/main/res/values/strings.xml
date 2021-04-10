@@ -40,6 +40,10 @@
     <string name="open_camera">"Kamera megnyitása"</string>
     <string name="lost_title">"Elveszett"</string>
     <string name="found_title">"Talált"</string>
+    <string name="btn_apply_find">"Megtaláltam"</string>
+    <string name="btn_apply_loseit">"Én vesztettem el"</string>
+    <string name="btn_apply_found">"Megtalálva"</string>
+    <string name="btn_apply_gotback">"Jelentkeztek érte"</string>
     <string name="button_send">Beküldés</string>
     <string name="text_building">Épület</string>
     <string name="hint_body">Leírás hozzáfűzése…</string>
@@ -66,4 +70,18 @@
     <string name="yes">Igen</string>
     <string name="no">Nem</string>
     <string name="post_created">Poszt létrehozva</string>
+    <string name="btn_applied_success">A poszt szerzője értesítést fog kapni</string>
+    <string name="btn_apply_own">Saját poszt</string>
+    <string name="reset_applied">Visszaállítás</string>
+    <string name="reset_applied_msg">Biztosan törlöd a posztra jelentkező felhasználót?</string>
+    <string name="notification_channel_id">1</string>
+    <string name="reset_applied_success">Jelentkező törölve. Visszaállítottad a posztod.</string>
+    <string name="notify_lost_title">Megtalálták egy tárgyadat!</string>
+    <string name="notify_lost_text">Valaki megtalálta a "%1$s" című posztod tárgyát! A részletekért kattints ide!</string>
+    <string name="notify_found_title">Jelentkeztek egy tárgyadra!</string>
+    <string name="notify_found_text">Valaki jelentkezett a "%1$s" című posztod tárgyáért! A részletekért kattints ide!</string>
+    <string name="delete_contact_title">Névjegy törlése</string>
+    <string name="delete_contact_msg">Biztosan törlöd ezt a névjegyet a mentett névjegyek közül?</string>
+    <string name="no_saved_contacts">Nincsenek mentett névjegyek</string>
+    <string name="no_own_post">Nincs saját posztod</string>
 </resources>

@@ -5,11 +5,9 @@ import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
-import android.util.Log
 import com.google.firebase.auth.FirebaseAuth
 import hu.bme.aut.android.bmelostandfound.databinding.ActivityLoginBinding
 import hu.bme.aut.android.bmelostandfound.extensions.validateNonEmpty
-import java.io.IOException
 
 class LoginActivity : BaseActivity() {
     private lateinit var firebaseAuth: FirebaseAuth
@@ -24,7 +22,7 @@ class LoginActivity : BaseActivity() {
 
             if (firebaseAuth.currentUser != null) {
                 // User is signed in (getCurrentUser() will be null if not signed in)
-                val intent = Intent(this, PostTabsActivity::class.java)
+                val intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 finish()
             }
@@ -65,7 +63,7 @@ class LoginActivity : BaseActivity() {
             .addOnSuccessListener {
                 hideProgressDialog()
 
-                startActivity(Intent(this@LoginActivity, PostTabsActivity::class.java))
+                startActivity(Intent(this@LoginActivity, MainActivity::class.java))
                 finish()
             }
             .addOnFailureListener { exception ->

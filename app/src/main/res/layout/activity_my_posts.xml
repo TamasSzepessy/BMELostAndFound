@@ -26,4 +26,13 @@
         android:id="@+id/content_posts"
         layout="@layout/content_posts" />
 
+    <TextView
+        android:id="@+id/tvEmpty"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="@string/no_own_post"
+        android:textColor="#D1D1D1"
+        android:textSize="18sp" />
+
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -16,7 +16,7 @@ import hu.bme.aut.android.bmelostandfound.data.Post
 import hu.bme.aut.android.bmelostandfound.data.User
 import hu.bme.aut.android.bmelostandfound.databinding.ActivityPostDetailBinding
 import hu.bme.aut.android.bmelostandfound.fragments.ContactFragment
-import hu.bme.aut.android.bmelostandfound.viewmodel.ContactViewModel
+import hu.bme.aut.android.bmelostandfound.room.db.viewmodel.ContactViewModel
 
 class PostDetailActivity : AppCompatActivity(), ContactFragment.ContactCreatedListener {
 
@@ -29,7 +29,8 @@ class PostDetailActivity : AppCompatActivity(), ContactFragment.ContactCreatedLi
         binding = ActivityPostDetailBinding.inflate(LayoutInflater.from(this))
         setContentView(binding.root)
 
-        binding.tvLostOrFound.text = intent.getStringExtra("from")
+        val from = intent.getStringExtra("from")
+        binding.tvLostOrFound.text = from
 
         binding.cardAuthor.contactsView.visibility = View.GONE
         contactViewModel = ViewModelProvider(this).get(ContactViewModel::class.java)
@@ -45,6 +46,40 @@ class PostDetailActivity : AppCompatActivity(), ContactFragment.ContactCreatedLi
             Glide.with(this).load(post?.imageUrl).into(binding.imgPost)
         }
 
+        if (post?.applied.isNullOrBlank()) {
+            if (post?.uid==FirebaseAuth.getInstance().currentUser?.uid){
+                binding.btnApply.text = getString(R.string.btn_apply_own)
+                binding.btnApply.icon = getDrawable(R.drawable.ic_round_list_alt_24)
+                binding.btnApply.isClickable = false
+            } else {
+                when (from) {
+                    getString(R.string.lost_title) -> {
+                        binding.btnApply.text = getString(R.string.btn_apply_find)
+                        binding.btnApply.setOnClickListener {
+                            applyForIt("lost", post!!.refid!!)
+                        }
+                    }
+                    getString(R.string.found_title) -> {
+                        binding.btnApply.text = getString(R.string.btn_apply_loseit)
+                        binding.btnApply.setOnClickListener {
+                            applyForIt("found", post!!.refid!!)
+                        }
+                    }
+                }
+            }
+        } else {
+            when (from) {
+                getString(R.string.lost_title) -> {
+                    binding.btnApply.text = getString(R.string.btn_apply_found)
+                }
+                getString(R.string.found_title) -> {
+                    binding.btnApply.text = getString(R.string.btn_apply_gotback)
+                }
+            }
+            binding.btnApply.icon = getDrawable(R.drawable.ic_baseline_done_24)
+            getApplicantData(post?.applied)
+        }
+
         binding.toolbar.title = ""
         setSupportActionBar(binding.toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
@@ -58,7 +93,28 @@ class PostDetailActivity : AppCompatActivity(), ContactFragment.ContactCreatedLi
         return super.onSupportNavigateUp()
     }
 
-    fun setUserData(userData: User) {
+    private fun applyForIt(coll: String, ref: String) {
+        val db = Firebase.firestore
+        db.collection(coll).document(ref)
+            .update("applied", FirebaseAuth.getInstance().currentUser?.uid)
+            .addOnSuccessListener {
+                when (coll) {
+                    "lost" -> {
+                        binding.btnApply.text = getString(R.string.btn_apply_found)
+                    }
+                    "found" -> {
+                        binding.btnApply.text = getString(R.string.btn_apply_gotback)
+                    }
+                }
+                binding.btnApply.icon = getDrawable(R.drawable.ic_baseline_done_24)
+                Toast.makeText(this, getString(R.string.btn_applied_success), Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun setUserData(userData: User) {
         binding.cardAuthor.tvUser.text = userData.username
         binding.cardAuthor.tvUserMail.text = userData.usermail
         if (userData.phone.isNullOrBlank()) {
@@ -104,6 +160,39 @@ class PostDetailActivity : AppCompatActivity(), ContactFragment.ContactCreatedLi
                         DocumentChange.Type.REMOVED -> {
                             //TODO
                         }
+                    }
+                }
+            }
+    }
+
+    private fun setAppliedData(userData: User) {
+        binding.btnApply.setOnClickListener {
+            val contactFragment = ContactFragment(
+                userData,
+                userData.uid == FirebaseAuth.getInstance().currentUser?.uid
+            )
+            contactFragment.show(supportFragmentManager, "Contact")
+        }
+    }
+
+    fun getApplicantData(userId: String?) {
+        var userData: User
+        val db = Firebase.firestore
+        db.collection("users")
+            .whereEqualTo("uid", userId)
+            .addSnapshotListener { snapshots, e ->
+                if (e != null) {
+                    Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
+                    return@addSnapshotListener
+                }
+
+                for (dc in snapshots!!.documentChanges) {
+                    when (dc.type) {
+                        DocumentChange.Type.ADDED -> {
+                            userData = dc.document.toObject()
+                            setAppliedData(userData)
+                        }
+                        else -> {val pass : Unit = Unit}
                     }
                 }
             }

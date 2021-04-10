@@ -16,7 +16,6 @@ import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
-import hu.bme.aut.android.bmelostandfound.adapter.ContactsAdapter
 import hu.bme.aut.android.bmelostandfound.adapter.PostsAdapter
 import hu.bme.aut.android.bmelostandfound.data.Post
 import hu.bme.aut.android.bmelostandfound.databinding.ActivityMyPostsBinding
@@ -93,7 +92,7 @@ class MyPostsActivity : AppCompatActivity(), PostsAdapter.PostClickListener {
                         AlertDialog.BUTTON_POSITIVE,
                         getString(R.string.yes)
                     ) { dialog, which ->
-                        deleteApplied(post.from!!, post.refid!!)
+                        resetApplied(post.from!!, post.refid!!)
                     }
                     alertDialog.setButton(
                         AlertDialog.BUTTON_NEGATIVE,
@@ -128,7 +127,7 @@ class MyPostsActivity : AppCompatActivity(), PostsAdapter.PostClickListener {
         return false
     }
 
-    private fun deleteApplied(coll: String, ref: String) {
+    private fun resetApplied(coll: String, ref: String) {
         val db = Firebase.firestore
         db.collection(coll).document(ref)
             .update("applied", null)

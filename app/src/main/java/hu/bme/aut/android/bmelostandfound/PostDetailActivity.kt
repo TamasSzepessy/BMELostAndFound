@@ -68,16 +68,34 @@ class PostDetailActivity : AppCompatActivity(), ContactFragment.ContactCreatedLi
                 }
             }
         } else {
-            when (from) {
-                getString(R.string.lost_title) -> {
-                    binding.btnApply.text = getString(R.string.btn_apply_found)
+            if (post?.applied==FirebaseAuth.getInstance().currentUser?.uid){
+                when (from) {
+                    getString(R.string.lost_title) -> {
+                        binding.btnApply.text = getString(R.string.btn_apply_youfoundit)
+                        binding.btnApply.setOnClickListener {
+                            resetApplied("lost", post!!.refid!!)
+                        }
+                    }
+                    getString(R.string.found_title) -> {
+                        binding.btnApply.text = getString(R.string.btn_apply_youlostit)
+                        binding.btnApply.setOnClickListener {
+                            resetApplied("found", post!!.refid!!)
+                        }
+                    }
                 }
-                getString(R.string.found_title) -> {
-                    binding.btnApply.text = getString(R.string.btn_apply_gotback)
+                binding.btnApply.icon = getDrawable(R.drawable.ic_baseline_done_24)
+            } else {
+                when (from) {
+                    getString(R.string.lost_title) -> {
+                        binding.btnApply.text = getString(R.string.btn_apply_found)
+                    }
+                    getString(R.string.found_title) -> {
+                        binding.btnApply.text = getString(R.string.btn_apply_gotback)
+                    }
                 }
+                binding.btnApply.icon = getDrawable(R.drawable.ic_baseline_done_24)
+                getApplicantData(post?.applied)
             }
-            binding.btnApply.icon = getDrawable(R.drawable.ic_baseline_done_24)
-            getApplicantData(post?.applied)
         }
 
         binding.toolbar.title = ""
@@ -100,14 +118,47 @@ class PostDetailActivity : AppCompatActivity(), ContactFragment.ContactCreatedLi
             .addOnSuccessListener {
                 when (coll) {
                     "lost" -> {
-                        binding.btnApply.text = getString(R.string.btn_apply_found)
+                        binding.btnApply.text = getString(R.string.btn_apply_youfoundit)
+                        binding.btnApply.setOnClickListener {
+                            resetApplied("lost", ref)
+                        }
                     }
                     "found" -> {
-                        binding.btnApply.text = getString(R.string.btn_apply_gotback)
+                        binding.btnApply.text = getString(R.string.btn_apply_youlostit)
+                        binding.btnApply.setOnClickListener {
+                            resetApplied("found", ref)
+                        }
                     }
                 }
                 binding.btnApply.icon = getDrawable(R.drawable.ic_baseline_done_24)
                 Toast.makeText(this, getString(R.string.btn_applied_success), Toast.LENGTH_SHORT).show()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+            }
+    }
+
+    private fun resetApplied(coll: String, ref: String) {
+        val db = Firebase.firestore
+        db.collection(coll).document(ref)
+            .update("applied", null)
+            .addOnSuccessListener {
+                when (coll) {
+                    "lost" -> {
+                        binding.btnApply.text = getString(R.string.btn_apply_find)
+                        binding.btnApply.setOnClickListener {
+                            applyForIt("lost", ref)
+                        }
+                    }
+                    "found" -> {
+                        binding.btnApply.text = getString(R.string.btn_apply_loseit)
+                        binding.btnApply.setOnClickListener {
+                            applyForIt("found", ref)
+                        }
+                    }
+                }
+                binding.btnApply.icon = getDrawable(R.drawable.ic_baseline_add_24)
+                Toast.makeText(this, "Jelentkezés törölve", Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener {
                 Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()

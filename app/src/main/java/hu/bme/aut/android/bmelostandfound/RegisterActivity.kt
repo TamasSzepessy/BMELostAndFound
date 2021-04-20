@@ -174,6 +174,7 @@ class RegisterActivity : BaseActivity() {
                 finish()
             }
             .addOnFailureListener { e ->
+                hideProgressDialog()
                 toast(e.toString())
             }
     }

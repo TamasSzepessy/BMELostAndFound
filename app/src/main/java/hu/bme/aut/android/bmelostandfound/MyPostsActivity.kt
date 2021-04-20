@@ -145,7 +145,7 @@ class MyPostsActivity : AppCompatActivity(), PostsAdapter.PostClickListener {
             .document(post.refid!!)
             .delete()
             .addOnSuccessListener {
-                Toast.makeText(this, "Sikeres törlés", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, getString(R.string.delete_success), Toast.LENGTH_SHORT).show()
             }
             .addOnFailureListener{
                 Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()

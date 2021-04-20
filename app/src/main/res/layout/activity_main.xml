@@ -58,8 +58,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@color/primaryColor"
-            app:tabIndicatorColor="#88FFE3"
-            app:tabTextColor="@color/tabTextColor" />
+            app:tabIndicatorColor="@color/secondaryColor"
+            app:tabTextColor="@color/tabTextColor"
+            app:tabRippleColor="@color/secondaryDarkColor"/>
     </com.google.android.material.appbar.AppBarLayout>
 
     <androidx.viewpager.widget.ViewPager

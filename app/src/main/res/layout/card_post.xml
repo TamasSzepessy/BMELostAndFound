@@ -21,6 +21,7 @@
             android:id="@+id/imgPost"
             android:layout_width="70dp"
             android:layout_height="70dp"
+            android:layout_marginStart="8dp"
             android:scaleType="centerCrop"
             app:shapeAppearanceOverlay="@style/roundedImageView"
             card_view:layout_constraintBottom_toBottomOf="parent"
@@ -71,6 +72,14 @@
             card_view:layout_constraintBottom_toBottomOf="parent"
             card_view:layout_constraintEnd_toEndOf="@+id/tvBuildingCode"
             card_view:layout_constraintTop_toBottomOf="@+id/tvBody" />
+
+        <ImageView
+            android:id="@+id/ivApplied"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            card_view:layout_constraintBottom_toBottomOf="@+id/imgPost"
+            card_view:layout_constraintEnd_toEndOf="@+id/imgPost"
+            card_view:srcCompat="@drawable/ic_baseline_check_box_32" />
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

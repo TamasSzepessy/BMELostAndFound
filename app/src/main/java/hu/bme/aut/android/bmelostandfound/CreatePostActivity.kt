@@ -25,7 +25,7 @@ import java.net.URLEncoder
 import java.text.SimpleDateFormat
 import java.util.*
 
-class CreatePostActivity() : BaseActivity() {
+class CreatePostActivity : BaseActivity() {
 
     companion object {
         private const val REQUEST_CAMERA = 101
@@ -70,6 +70,8 @@ class CreatePostActivity() : BaseActivity() {
             return
         }
 
+        showProgressDialog()
+
         if (binding.imgAttach.drawable.constantState == getDrawable(R.drawable.ic_add_image)?.constantState) {
             uploadPost()
         } else {
@@ -104,10 +106,12 @@ class CreatePostActivity() : BaseActivity() {
         db.collection(fromView)
             .add(newPost)
             .addOnSuccessListener {
+                hideProgressDialog()
                 toast(getString(R.string.post_created))
                 finish()
             }
             .addOnFailureListener { e ->
+                hideProgressDialog()
                 toast(e.toString())
             }
     }

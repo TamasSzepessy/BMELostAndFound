@@ -249,11 +249,11 @@ class MainActivity : AppCompatActivity(), ContactFragment.ContactCreatedListener
 
     private fun logout() {
         val alertDialog = AlertDialog.Builder(this).create()
-        alertDialog.setTitle("Kijelentkezés")
-        alertDialog.setMessage("Biztosan ki akarsz lépni?")
+        alertDialog.setTitle(getString(R.string.logout_title))
+        alertDialog.setMessage(getString(R.string.logout_msg))
         alertDialog.setButton(
             AlertDialog.BUTTON_POSITIVE,
-            "Igen"
+            getString(R.string.yes)
         ) { dialog, which ->
             FirebaseAuth.getInstance().signOut()
             startActivity(Intent(this, LoginActivity::class.java))
@@ -261,7 +261,7 @@ class MainActivity : AppCompatActivity(), ContactFragment.ContactCreatedListener
         }
         alertDialog.setButton(
             AlertDialog.BUTTON_NEGATIVE,
-            "Nem"
+            getString(R.string.no)
         ) { dialog, which -> dialog.dismiss() }
         alertDialog.show()
     }

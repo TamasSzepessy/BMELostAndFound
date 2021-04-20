@@ -14,6 +14,16 @@
         android:paddingTop="56dp"
         android:paddingRight="24dp">
 
+        <TextView
+            android:id="@+id/tvHintAddPic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/hint_add_profile_pic"
+            android:textAlignment="center"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:layout_marginBottom="8dp"/>
+
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/ivUser"
             android:layout_width="130dp"

@@ -35,6 +35,7 @@ class PostsAdapter(private val context: Context) :
         val tvBody: TextView = binding.tvBody
         val tvDate: TextView = binding.tvDate
         val imgPost: ImageView = binding.imgPost
+        val ivApplied: ImageView = binding.ivApplied
 
         var post: Post? = null
 
@@ -79,6 +80,12 @@ class PostsAdapter(private val context: Context) :
             Glide.with(context).load(R.drawable.ic_no_img).into(holder.imgPost);
         } else {
             Glide.with(context).load(tmpPost.imageUrl).into(holder.imgPost)
+        }
+
+        if (tmpPost.applied.isNullOrBlank()) {
+            holder.ivApplied.visibility = View.GONE
+        } else {
+            holder.ivApplied.visibility = View.VISIBLE
         }
 
         setAnimation(holder.itemView, position)

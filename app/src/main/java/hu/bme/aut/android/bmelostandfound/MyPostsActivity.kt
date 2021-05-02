@@ -92,7 +92,9 @@ class MyPostsActivity : AppCompatActivity(), PostsAdapter.PostClickListener {
                         AlertDialog.BUTTON_POSITIVE,
                         getString(R.string.yes)
                     ) { dialog, which ->
-                        resetApplied(post.from!!, post.refid!!)
+                        if (!post.from.isNullOrBlank() and !post.refid.isNullOrBlank()) {
+                            resetApplied(post.from!!, post.refid!!)
+                        }
                     }
                     alertDialog.setButton(
                         AlertDialog.BUTTON_NEGATIVE,
@@ -194,7 +196,8 @@ class MyPostsActivity : AppCompatActivity(), PostsAdapter.PostClickListener {
                         )
                         DocumentChange.Type.MODIFIED -> postsAdapter.modifyPost(
                             dc.document.toObject(),
-                            dc.document.reference.id
+                            dc.document.reference.id,
+                            "lost"
                         )
                         DocumentChange.Type.REMOVED -> {
                             postsAdapter.delPost(dc.document.reference.id)
@@ -221,7 +224,8 @@ class MyPostsActivity : AppCompatActivity(), PostsAdapter.PostClickListener {
                         )
                         DocumentChange.Type.MODIFIED -> postsAdapter.modifyPost(
                             dc.document.toObject(),
-                            dc.document.reference.id
+                            dc.document.reference.id,
+                            "found"
                         )
                         DocumentChange.Type.REMOVED -> {
                             postsAdapter.delPost(dc.document.reference.id)

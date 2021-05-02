@@ -6,8 +6,9 @@ import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
-import android.graphics.Color
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -18,9 +19,10 @@ import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.NotificationCompat
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.CustomTarget
+import com.bumptech.glide.request.transition.Transition
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.tabs.TabLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -33,7 +35,6 @@ import hu.bme.aut.android.bmelostandfound.data.Post
 import hu.bme.aut.android.bmelostandfound.data.User
 import hu.bme.aut.android.bmelostandfound.databinding.ActivityMainBinding
 import hu.bme.aut.android.bmelostandfound.fragments.ContactFragment
-import kotlin.random.Random
 
 
 class MainActivity : AppCompatActivity(), ContactFragment.ContactCreatedListener {
@@ -43,7 +44,7 @@ class MainActivity : AppCompatActivity(), ContactFragment.ContactCreatedListener
     private lateinit var notificationChannel: NotificationChannel
     private lateinit var builder: Notification.Builder
     private val channelId = "i.apps.notifications"
-    private val description = "Applied notification"
+    private val description = "Application notification"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -202,12 +203,14 @@ class MainActivity : AppCompatActivity(), ContactFragment.ContactCreatedListener
             }
     }
 
-    private fun notifyApplied(post: Post, from: String){
+    private fun notifyApplied(post: Post, from: String) {
+        val tmpId = System.currentTimeMillis().toInt()
         val intent = Intent(this, PostDetailActivity::class.java)
         intent.putExtra("data", post)
         intent.putExtra("from", from)
-        var notifTitle : String? = null
-        var notifText : String? = null
+        intent.action = "intent_action_$tmpId"
+        var notifTitle: String? = null
+        var notifText: String? = null
         when (from) {
             getString(R.string.lost_title) -> {
                 notifTitle = getString(R.string.notify_lost_title)
@@ -218,9 +221,16 @@ class MainActivity : AppCompatActivity(), ContactFragment.ContactCreatedListener
                 notifText = getString(R.string.notify_found_text, post.title)
             }
         }
-        val pendingIntent = PendingIntent.getActivity(this, Random.nextInt(), intent, PendingIntent.FLAG_UPDATE_CURRENT)
+
+        val pendingIntent = PendingIntent.getActivity(
+            applicationContext,
+            tmpId,
+            intent,
+            PendingIntent.FLAG_ONE_SHOT
+        )
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            notificationChannel = NotificationChannel(channelId, description, NotificationManager.IMPORTANCE_HIGH)
+            notificationChannel =
+                NotificationChannel(channelId, description, NotificationManager.IMPORTANCE_HIGH)
             notificationChannel.enableLights(true)
             notificationChannel.lightColor = getColor(R.color.secondaryColor)
             notificationChannel.enableVibration(false)
@@ -234,6 +244,8 @@ class MainActivity : AppCompatActivity(), ContactFragment.ContactCreatedListener
                 .setSmallIcon(R.mipmap.ic_launcher)
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher))
                 .setContentIntent(pendingIntent)
+
+
         } else {
             builder = Notification.Builder(this)
                 .setContentTitle(notifTitle)
@@ -244,7 +256,29 @@ class MainActivity : AppCompatActivity(), ContactFragment.ContactCreatedListener
                 .setLargeIcon(BitmapFactory.decodeResource(this.resources, R.mipmap.ic_launcher))
                 .setContentIntent(pendingIntent)
         }
-        notificationManager.notify(Random.nextInt(), builder.build())
+
+        val notifBuilder = builder
+
+        if (!post.imageUrl.isNullOrBlank()) {
+            Glide.with(applicationContext)
+                .asBitmap()
+                .load(post.imageUrl)
+                .centerCrop()
+                .into(object : CustomTarget<Bitmap?>() {
+                    override fun onResourceReady(
+                        resource: Bitmap,
+                        transition: Transition<in Bitmap?>?
+                    ) {
+                        notifBuilder.setLargeIcon(resource)
+                        notificationManager.notify(tmpId, notifBuilder.build())
+                    }
+                    override fun onLoadCleared(placeholder: Drawable?) {
+                        //do nothing
+                    }
+                })
+        } else {
+            notificationManager.notify(tmpId, notifBuilder.build())
+        }
     }
 
     private fun logout() {

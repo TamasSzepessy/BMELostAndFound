@@ -113,11 +113,12 @@ class PostsAdapter(private val context: Context) :
         notifyDataSetChanged()
     }
 
-    fun modifyPost(post: Post?, refid: String?) {
+    fun modifyPost(post: Post?, refid: String?, from: String? = null) {
         post ?: return
 
         postList.remove(postList.find { it.refid == refid })
         post.refid = refid
+        post.from = from
         postList += (post)
         postList.sortByDescending { it.date }
         postList.reverse()

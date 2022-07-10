@@ -1,7 +1,7 @@
 # BME Lost & Found
-
+<p align="center">
 <img title="" src="doc/app_logo.png" alt="ic_launcher.png" data-align="center" width="136">
-
+</p>
 ## Description
 
 This project was created for the subject Android-based Software Development at the Budapest University of Technology. It is written in Kotlin, using Android Studio as debugging platform.
